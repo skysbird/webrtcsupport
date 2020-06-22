@@ -10,6 +10,9 @@ if (self.mozRTCPeerConnection || navigator.mozGetUserMedia) {
 } else if (self.webkitRTCPeerConnection || navigator.webkitGetUserMedia) {
   prefix = 'webkit'
   version = navigator.userAgent.match(/Chrom(e|ium)/) && parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10)
+} else {
+  prefix = 'other'
+  version = 0
 }
 
 var PC = self.RTCPeerConnection || self.mozRTCPeerConnection || self.webkitRTCPeerConnection
@@ -22,13 +25,13 @@ var screenSharing = self.location.protocol === 'https:' &&
 var AudioContext = self.AudioContext || self.webkitAudioContext
 var videoEl = self.document && document.createElement('video')
 var supportVp8 = videoEl && videoEl.canPlayType && videoEl.canPlayType('video/webm; codecs="vp8", vorbis') === 'probably'
-var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia
+var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
 
 // export support flags and constructors.prototype && PC
 module.exports = {
   prefix: prefix,
   browserVersion: version,
-  support: !!PC && !!getUserMedia,
+  support: !!PC,
     // new support style
   supportRTCPeerConnection: !!PC,
   supportVp8: supportVp8,
